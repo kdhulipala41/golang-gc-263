@@ -1,0 +1,3 @@
+- Wrote up a simple program that allocates memory and deallocates it every 5 seconds
+- Benchmark and graph out results
+- Set GOMEMLIMIT to 75k bytes to see GC in action (still WIP)
