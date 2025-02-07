@@ -1,3 +1,4 @@
-- Wrote up a simple program that allocates memory and deallocates it every 5 seconds
-- Benchmark and graph out results
-- Set GOMEMLIMIT to 75k bytes to see GC in action (still WIP)
+- Wrote up a simple program that allocates 500,000 bytes as long-lived heap memory
+- Then in a loop for a minute, allocate 20,480 bytes every 100ms (short-lived, garbage pretty immediately)
+- Interesting notes: it's really hard to make short-lived allocations as Go's compiler is smart enough to optimize out dumb allocations
+- Sawtooth pattern as a result of GOMEMLIMIT being approached, showing Go's GC in action when approaching the target

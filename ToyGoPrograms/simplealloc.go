@@ -7,26 +7,25 @@ import (
 	"time"
 )
 
-// Allocates 1024 bytes every 0.5 seconds.
+var sink []byte // Global var, doesn't allow compiler to optimize it out.
+
+// Allocates 20480 bytes every 0.1 seconds.
 func simpleAllocLoop() {
-	var allocations [][]byte
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
+	_ = make([]byte, 500000)
 	for {
-		select {
-		case <-ticker.C:
-			allocations = nil
-		default:
-			x := make([]byte, 1024)
-			allocations = append(allocations, x)
-			time.Sleep(100 * time.Millisecond)
-		}
+		sink = make([]byte, 20480)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
 func main() {
 	// Set GOMEMLIMIT to 100MB
 	err := os.Setenv("GOMEMLIMIT", "750000B")
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.MkdirAll("runs", os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
