@@ -17,3 +17,4 @@ The Go garbage collector implements a concurrent, tri-color, mark and sweep algo
 - https://www.uber.com/blog/how-we-saved-70k-cores-across-30-mission-critical-services/
 - https://weaviate.io/blog/gomemlimit-a-game-changer-for-high-memory-applications
 - https://blog.twitch.tv/en/2019/04/10/go-memory-ballast-how-i-learnt-to-stop-worrying-and-love-the-heap/
+- https://cs.opensource.google/go/x/benchmarks
