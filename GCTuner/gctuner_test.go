@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"runtime/pprof"
 	"testing"
 )
@@ -16,42 +17,42 @@ func BenchmarkASTParseDefault(b *testing.B) {
 }
 
 func BenchmarkASTParseGCOff(b *testing.B) {
-	b.Setenv("GOGC", "OFF")
+	debug.SetGCPercent(-1) // Not sure why, but this works over setting GOGC to a certain value.
 	profileBenchmark(b, "BenchmarkASTParseGCOff", func() {
 		astparse.BenchmarkN(10000)
 	})
 }
 
 func BenchmarkASTParseGCLow(b *testing.B) {
-	b.Setenv("GOGC", "10")
+	debug.SetGCPercent(10)
 	profileBenchmark(b, "BenchmarkASTParseGCLow", func() {
 		astparse.BenchmarkN(10000)
 	})
 }
 
 func BenchmarkASTParseGCMid(b *testing.B) {
-	b.Setenv("GOGC", "50")
+	debug.SetGCPercent(50)
 	profileBenchmark(b, "BenchmarkASTParseGCMid", func() {
 		astparse.BenchmarkN(10000)
 	})
 }
 
 func BenchmarkASTParseLowMemLimit(b *testing.B) {
-	b.Setenv("GOMEMLIMIT", "10000MB")
+	debug.SetMemoryLimit(10000 >> 20) // 10000MB
 	profileBenchmark(b, "BenchmarkASTParseLowMemLimit", func() {
 		astparse.BenchmarkN(10000)
 	})
 }
 
 func BenchmarkASTParseMidMemLimit(b *testing.B) {
-	b.Setenv("GOMEMLIMIT", "20000MB")
+	debug.SetMemoryLimit(20000 >> 20) // 20000MB
 	profileBenchmark(b, "BenchmarkASTParseMidMemLimit", func() {
 		astparse.BenchmarkN(10000)
 	})
 }
 
 func BenchmarkASTParseHighMemLimit(b *testing.B) {
-	b.Setenv("GOMEMLIMIT", "40000MB")
+	debug.SetMemoryLimit(40000 >> 20) // 40000MB
 	profileBenchmark(b, "BenchmarkASTParseHighMemLimit", func() {
 		astparse.BenchmarkN(10000)
 	})
