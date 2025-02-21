@@ -2,6 +2,7 @@ package main
 
 import (
 	"cs263/GCTuner/astparse"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -37,7 +38,15 @@ func BenchmarkASTParseGCMid(b *testing.B) {
 	})
 }
 
+func BenchmarkASTParseGCLarge(b *testing.B) {
+	debug.SetGCPercent(200)
+	profileBenchmark(b, "BenchmarkASTParseGCLarge", func() {
+		astparse.BenchmarkN(10000)
+	})
+}
+
 func BenchmarkASTParseLowMemLimit(b *testing.B) {
+	debug.SetGCPercent(-1)
 	debug.SetMemoryLimit(10000 >> 20) // 10000MB
 	profileBenchmark(b, "BenchmarkASTParseLowMemLimit", func() {
 		astparse.BenchmarkN(10000)
@@ -45,6 +54,7 @@ func BenchmarkASTParseLowMemLimit(b *testing.B) {
 }
 
 func BenchmarkASTParseMidMemLimit(b *testing.B) {
+	debug.SetGCPercent(-1)
 	debug.SetMemoryLimit(20000 >> 20) // 20000MB
 	profileBenchmark(b, "BenchmarkASTParseMidMemLimit", func() {
 		astparse.BenchmarkN(10000)
@@ -52,10 +62,17 @@ func BenchmarkASTParseMidMemLimit(b *testing.B) {
 }
 
 func BenchmarkASTParseHighMemLimit(b *testing.B) {
+	debug.SetGCPercent(-1)
 	debug.SetMemoryLimit(40000 >> 20) // 40000MB
 	profileBenchmark(b, "BenchmarkASTParseHighMemLimit", func() {
 		astparse.BenchmarkN(10000)
 	})
+}
+
+func printGCCPUFrac() {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+	fmt.Printf("%.6f\n", memStats.GCCPUFraction)
 }
 
 func profileBenchmark(b *testing.B, name string, benchmarkFunc func()) {
@@ -76,6 +93,7 @@ func profileBenchmark(b *testing.B, name string, benchmarkFunc func()) {
 		b.Fatalf("could not start CPU profile: %v", err)
 	}
 	defer pprof.StopCPUProfile()
+	defer printGCCPUFrac()
 
 	// Run the benchmark
 	b.ResetTimer()
