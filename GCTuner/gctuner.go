@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"runtime"
 	"time"
 )
@@ -28,15 +29,21 @@ func finalizerHandler(f *finalizerRef) {
 
 // Setup a func with an inf. for-select loop on f.parent.ch, which will trigger
 // grabbing memory metrics, calculating new value of GOGC/GOMEMLIMIT and setting it.
+func setDynamicGCValue(f *finalizerRef) {
+	for range f.parent.ch {
+		fmt.Print("made it!")
+	}
+}
 
+// Add options, and finish above function to read memory limit and set it based on the option.
 func InitGCTuner() *finalizer {
-	// TODO: add actual stats read from mem stats, and do work off of this
 	f := &finalizer{
 		ch: make(chan time.Time, 1),
 	}
 
 	f.ref = &finalizerRef{parent: f}
 	runtime.SetFinalizer(f.ref, finalizerHandler)
+	go setDynamicGCValue(f.ref)
 	f.ref = nil
 
 	return f
