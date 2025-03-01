@@ -5,7 +5,15 @@ import (
 	"testing"
 )
 
-func TestGCTunerBasic(t *testing.T) {
+func BenchmarkNoTuner(b *testing.B) {
+	profileBenchmark(b, "BenchmarkNoTuner", func() {
+		astparse.BenchmarkN(10000)
+	})
+}
+
+func BenchmarkWithDefaultTuner(b *testing.B) {
 	InitGCTuner()
-	astparse.BenchmarkN(100)
+	profileBenchmark(b, "BenchmarkWithDefaultTuner", func() {
+		astparse.BenchmarkN(10000)
+	})
 }
