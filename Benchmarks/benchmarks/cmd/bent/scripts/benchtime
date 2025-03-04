@@ -1,7 +1,0 @@
-#!/bin/bash
-# Run args as command, but with a benchtime parameter
-
-bt="$1"
-shift
-
-"$@" -test.benchtime="$bt"
