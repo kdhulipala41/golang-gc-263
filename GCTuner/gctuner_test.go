@@ -2,6 +2,7 @@ package main
 
 import (
 	"cs263/GCTuner/astparse"
+	"cs263/GCTuner/gctuner"
 	"testing"
 )
 
@@ -12,7 +13,7 @@ func BenchmarkASTParseNoTuner(b *testing.B) {
 }
 
 func BenchmarkASTParseWithTuner(b *testing.B) {
-	InitGCTuner()
+	gctuner.InitGCTuner()
 	profileBenchmark(b, "BenchmarkWithDefaultTuner", func() {
 		astparse.BenchmarkN(10000)
 	})
