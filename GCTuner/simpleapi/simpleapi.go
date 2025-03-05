@@ -2,8 +2,11 @@ package main
 
 import (
 	"cs263/GCTuner/astparse"
+	"cs263/GCTuner/gctuner"
 	"cs263/GCTuner/mergesort"
 	"encoding/json"
+	"flag"
+	"fmt"
 	"net/http"
 	"runtime"
 )
@@ -39,6 +42,15 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var tunerType int
+	flag.IntVar(&tunerType, "tunerType", -1, "Type of GC tuner to use: 0 - AIMD, 1 - Rolling Avg, 2 - Linear, 3- Flip Flop, 4 - GC Value Threshold")
+	flag.Parse()
+
+	if tunerType != -1 {
+		fmt.Print("turning on gctuner")
+		gctuner.InitGCTuner(tunerType)
+	}
+
 	http.HandleFunc("/mergesort", mergesortHandler)
 	http.HandleFunc("/astparse", astparseHandler)
 	http.HandleFunc("/stats", statsHandler)
