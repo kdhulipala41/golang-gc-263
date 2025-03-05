@@ -36,7 +36,7 @@ func BenchmarkN(N uint64) {
 			defer wg.Done()
 			for atomic.AddInt64(&remain, -1) >= 0 {
 				gate <- true
-				p := parsePackage()
+				p := ParsePackage()
 				mu.Lock()
 				// Overwrite only half of the array,
 				// the other part represents "old" generation.
@@ -51,7 +51,7 @@ func BenchmarkN(N uint64) {
 }
 
 // parsePackage parses and returns net/http package.
-func parsePackage() ParsedPackage {
+func ParsePackage() ParsedPackage {
 	pkgs, err := parser.ParseFile(token.NewFileSet(), "net/http", src, parser.ParseComments)
 	if err != nil {
 		println("parse", err.Error())

@@ -1,15 +1,22 @@
 package main
 
 import (
+	"cs263/GCTuner/astparse"
 	"cs263/GCTuner/mergesort"
 	"encoding/json"
 	"net/http"
 	"runtime"
 )
 
-// Handler to insert random data into the map
 func mergesortHandler(w http.ResponseWriter, r *http.Request) {
 	mergesort.AllocateNAndSort(10000)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Success\n"))
+}
+
+func astparseHandler(w http.ResponseWriter, r *http.Request) {
+	astparse.ParsePackage()
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Success\n"))
@@ -33,6 +40,7 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/mergesort", mergesortHandler)
+	http.HandleFunc("/astparse", astparseHandler)
 	http.HandleFunc("/stats", statsHandler)
 
 	http.ListenAndServe(":8080", nil)
