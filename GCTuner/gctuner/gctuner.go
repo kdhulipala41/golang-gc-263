@@ -49,6 +49,16 @@ func finalizerHandler(f *finalizerRef) {
 	runtime.SetFinalizer(f, finalizerHandler)
 }
 
+func clamp(value, min, max int) int {
+	if value < min {
+		return min
+	}
+	if value > max {
+		return max
+	}
+	return value
+}
+
 // Setup a func with an inf. for-select loop on f.parent.ch, which will trigger
 // grabbing memory metrics, calculating new value of GOGC/GOMEMLIMIT and setting it.
 func setGCValueAIMD(f *finalizerRef) {
