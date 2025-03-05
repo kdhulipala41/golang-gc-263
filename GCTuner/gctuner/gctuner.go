@@ -62,123 +62,123 @@ func clamp(value, min, max int) int {
 // Setup a func with an inf. for-select loop on f.parent.ch, which will trigger
 // grabbing memory metrics, calculating new value of GOGC/GOMEMLIMIT and setting it.
 func setGCValueAIMD(f *finalizerRef) {
-  for range f.parent.ch {
-    currHeapAlloc := readHeapAllocStats()
-    currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
-    // fmt.Printf("Current: %v, Past: %v, Diff: %v\n", currHeapAlloc, prevHeapAlloc, currDiffAlloc)
-    var newGCPercent int
-    if currDiffAlloc-prevDiffAlloc > 0 {
-      // GC more aggressive
-      newGCPercent = max(minGCPercent, int(0.7*float32(currGCPercent)))
-    } else {
-      // GC more relaxed
-      newGCPercent = min(maxGCPercent, currGCPercent+40)
-    }
-    if newGCPercent != currGCPercent {
-      // fmt.Printf("CurrGCPercent: %v, NewGCPercent%v\n", currGCPercent, newGCPercent)
-      setGCValue(newGCPercent)
-    }
-    prevDiffAlloc = currDiffAlloc
-    prevHeapAlloc = currHeapAlloc
-  }
+	for range f.parent.ch {
+		currHeapAlloc := readHeapAllocStats()
+		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
+		// fmt.Printf("Current: %v, Past: %v, Diff: %v\n", currHeapAlloc, prevHeapAlloc, currDiffAlloc)
+		var newGCPercent int
+		if currDiffAlloc-prevDiffAlloc > 0 {
+			// GC more aggressive
+			newGCPercent = max(minGCPercent, int(0.7*float32(currGCPercent)))
+		} else {
+			// GC more relaxed
+			newGCPercent = min(maxGCPercent, currGCPercent+40)
+		}
+		if newGCPercent != currGCPercent {
+			// fmt.Printf("CurrGCPercent: %v, NewGCPercent%v\n", currGCPercent, newGCPercent)
+			setGCValue(newGCPercent)
+		}
+		prevDiffAlloc = currDiffAlloc
+		prevHeapAlloc = currHeapAlloc
+	}
 }
 
 // Dynamically modifies GOGC/GOMEMLIMIT to either 50 or 500
 // based on positive/negative difference in allocation speed
 func setGCValueFlipFlop(f *finalizerRef) {
-  for range f.parent.ch {
-    currHeapAlloc := readHeapAllocStats()
-    currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
-    var newGCPercent int
-    if currDiffAlloc-prevDiffAlloc > 0 {
-      // GC more aggressive
-      newGCPercent = minGCPercent
-    } else {
-      // GC more relaxed
-      newGCPercent = maxGCPercent
-    }
-    if newGCPercent != currGCPercent {
-      setGCValue(newGCPercent)
-    }
-    prevDiffAlloc = currDiffAlloc
-    prevHeapAlloc = currHeapAlloc
-  }
+	for range f.parent.ch {
+		currHeapAlloc := readHeapAllocStats()
+		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
+		var newGCPercent int
+		if currDiffAlloc-prevDiffAlloc > 0 {
+			// GC more aggressive
+			newGCPercent = minGCPercent
+		} else {
+			// GC more relaxed
+			newGCPercent = maxGCPercent
+		}
+		if newGCPercent != currGCPercent {
+			setGCValue(newGCPercent)
+		}
+		prevDiffAlloc = currDiffAlloc
+		prevHeapAlloc = currHeapAlloc
+	}
 }
 
 // Dynamically modifies GOGC/GOMEMLIMIT to either 50 or 500
 // based on allocation speed being above or below 10MB threshold
 func setGCValueThreshold(f *finalizerRef) {
-    const threshold = 1024 * 1024 * 10
-    for range f.parent.ch {
-        currHeapAlloc := readHeapAllocStats()
-        currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
-        var newGCPercent int
-        if currDiffAlloc > threshold {
-      // GC more aggressive
-            newGCPercent = minGCPercent
-        } else {
-      // GC more relaxed
-            newGCPercent = maxGCPercent
-        }
-        if newGCPercent != currGCPercent {
-            setGCValue(newGCPercent)
-        }
-        prevHeapAlloc = currHeapAlloc
-    }
+	const threshold = 1024 * 1024 * 10
+	for range f.parent.ch {
+		currHeapAlloc := readHeapAllocStats()
+		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
+		var newGCPercent int
+		if currDiffAlloc > threshold {
+			// GC more aggressive
+			newGCPercent = minGCPercent
+		} else {
+			// GC more relaxed
+			newGCPercent = maxGCPercent
+		}
+		if newGCPercent != currGCPercent {
+			setGCValue(newGCPercent)
+		}
+		prevHeapAlloc = currHeapAlloc
+	}
 }
 
 // Dynamically scales GOGC/GOMEMLIMIT linearly based on allocation rate
 // (normalized into the range of [minGCPercent, maxGCPercent])
 func setGCValueLinear(f *finalizerRef) {
-  // alloc rates are min of 1MB/sec and max of 50MB/sec
-    const maxAllocRate = 1024 * 1024 * 50
-    const minAllocRate = 1024 * 1024 * 1
-    for range f.parent.ch {
-        currHeapAlloc := readHeapAllocStats()
-        currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
-        normalizedGC := maxGCPercent - int((float64(currDiffAlloc-minAllocRate)/float64(maxAllocRate-minAllocRate))*(float64(maxGCPercent-minGCPercent)))
-        normalizedGC = clamp(normalizedGC, minGCPercent, maxGCPercent)
-        if normalizedGC != currGCPercent {
-            setGCValue(normalizedGC)
-        }
-        prevHeapAlloc = currHeapAlloc
-    }
+	// alloc rates are min of 1MB/sec and max of 50MB/sec
+	const maxAllocRate = 1024 * 1024 * 50
+	const minAllocRate = 1024 * 1024 * 1
+	for range f.parent.ch {
+		currHeapAlloc := readHeapAllocStats()
+		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
+		normalizedGC := maxGCPercent - int((float64(currDiffAlloc-minAllocRate)/float64(maxAllocRate-minAllocRate))*(float64(maxGCPercent-minGCPercent)))
+		normalizedGC = clamp(normalizedGC, minGCPercent, maxGCPercent)
+		if normalizedGC != currGCPercent {
+			setGCValue(normalizedGC)
+		}
+		prevHeapAlloc = currHeapAlloc
+	}
 }
 
 // Dynamically scales GOGC/GOMEMLIMIT from a rolling average
 // from a history of the 5 most recent allocation speeds
 func setGCValueRollingAvg(f *finalizerRef) {
-    const windowSize = 5
-    var allocHistory [windowSize]int64
-    var index int
-    for range f.parent.ch {
-        currHeapAlloc := readHeapAllocStats()
-        currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
-        allocHistory[index%windowSize] = currDiffAlloc
-        index++
-        var total int64
-        for _, v := range allocHistory {
-            total += v
-        }
-        avgAllocRate := total / windowSize
-        var newGCPercent int
-        if avgAllocRate > prevDiffAlloc {
-      // GC more aggressive
-            newGCPercent = minGCPercent
-        } else {
-      // GC more relaxed
-            newGCPercent = maxGCPercent
-        }
-        if newGCPercent != currGCPercent {
-            setGCValue(newGCPercent)
-        }
-        prevHeapAlloc = currHeapAlloc
-        prevDiffAlloc = avgAllocRate
-    }
+	const windowSize = 5
+	var allocHistory [windowSize]int64
+	var index int
+	for range f.parent.ch {
+		currHeapAlloc := readHeapAllocStats()
+		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
+		allocHistory[index%windowSize] = currDiffAlloc
+		index++
+		var total int64
+		for _, v := range allocHistory {
+			total += v
+		}
+		avgAllocRate := total / windowSize
+		var newGCPercent int
+		if avgAllocRate > prevDiffAlloc {
+			// GC more aggressive
+			newGCPercent = minGCPercent
+		} else {
+			// GC more relaxed
+			newGCPercent = maxGCPercent
+		}
+		if newGCPercent != currGCPercent {
+			setGCValue(newGCPercent)
+		}
+		prevHeapAlloc = currHeapAlloc
+		prevDiffAlloc = avgAllocRate
+	}
 }
 
 // Add options, and finish above function to read memory limit and set it based on the option.
-func InitGCTuner() *finalizer {
+func InitGCTuner(tunerType int) *finalizer {
 	// Set the GOMEMLIMIT to 90% of the cgroup's memory limit or the system's memory limit.
 	memlimit.SetGoMemLimitWithOpts(
 		memlimit.WithRatio(0.9),
@@ -197,7 +197,19 @@ func InitGCTuner() *finalizer {
 
 	f.ref = &finalizerRef{parent: f}
 	runtime.SetFinalizer(f.ref, finalizerHandler)
-	go setGCValueAIMD(f.ref)
+
+	switch tunerType {
+	case 0:
+		go setGCValueAIMD(f.ref)
+	case 1:
+		go setGCValueRollingAvg(f.ref)
+	case 2:
+		go setGCValueLinear(f.ref)
+	case 3:
+		go setGCValueFlipFlop(f.ref)
+	case 4:
+		go setGCValueThreshold(f.ref)
+	}
 	f.ref = nil
 
 	return f
