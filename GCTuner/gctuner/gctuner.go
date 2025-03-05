@@ -106,9 +106,9 @@ func setGCValueFlipFlop(f *finalizerRef) {
 }
 
 // Dynamically modifies GOGC/GOMEMLIMIT to either 50 or 500
-// based on allocation speed being above or below 10MB threshold
+// based on allocation speed being above or below 1GB threshold
 func setGCValueThreshold(f *finalizerRef) {
-	const threshold = 1024 * 1024 * 10
+	const threshold = 1024 * 1024 * 1024
 	for range f.parent.ch {
 		currHeapAlloc := readHeapAllocStats()
 		currDiffAlloc := int64(currHeapAlloc) - int64(prevHeapAlloc)
