@@ -3,6 +3,7 @@ package main
 import (
 	"cs263/GCTuner/astparse"
 	"cs263/GCTuner/gctuner"
+	nestedptrmap "cs263/GCTuner/nesterptrmap"
 	"testing"
 )
 
@@ -44,5 +45,46 @@ func BenchmarkASTParseWithThresholdTuner(b *testing.B) {
 	gctuner.InitGCTuner(4)
 	profileBenchmark(b, "BenchmarkASTParseWithThresholdTuner", func() {
 		astparse.BenchmarkN(10000)
+	})
+}
+
+func BenchmarkNestedPtrMapNoTuner(b *testing.B) {
+	profileBenchmark(b, "BenchmarkNestedPtrMapNoTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
+	})
+}
+
+func BenchmarkNestedPtrMapWithAIMDTuner(b *testing.B) {
+	gctuner.InitGCTuner(0)
+	profileBenchmark(b, "BenchmarkNestedPtrMapWithAIMDTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
+	})
+}
+
+func BenchmarkNestedPtrMapWithRollingAvgTuner(b *testing.B) {
+	gctuner.InitGCTuner(1)
+	profileBenchmark(b, "BenchmarkNestedPtrMapWithRollingAvgTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
+	})
+}
+
+func BenchmarkNestedPtrMapWithLinearTuner(b *testing.B) {
+	gctuner.InitGCTuner(2)
+	profileBenchmark(b, "BenchmarkNestedPtrMapWithLinearTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
+	})
+}
+
+func BenchmarkNestedPtrMapWithFlipFlopTuner(b *testing.B) {
+	gctuner.InitGCTuner(3)
+	profileBenchmark(b, "BenchmarkNestedPtrMapNoTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
+	})
+}
+
+func BenchmarkNestedPtrMapWithThresholdTuner(b *testing.B) {
+	gctuner.InitGCTuner(4)
+	profileBenchmark(b, "BenchmarkNestedPtrMapWithThresholdTuner", func() {
+		nestedptrmap.InitAndMutateNestedPtrMap()
 	})
 }

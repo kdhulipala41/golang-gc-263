@@ -8,7 +8,9 @@ import (
 	"runtime"
 	"runtime/debug"
 	"runtime/pprof"
+	"sort"
 	"testing"
+	"time"
 )
 
 func BenchmarkASTParseDefault(b *testing.B) {
@@ -72,7 +74,7 @@ func BenchmarkASTParseHighMemLimit(b *testing.B) {
 func printGCCPUFrac() {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
-	fmt.Printf("%.6f\n", memStats.GCCPUFraction)
+	fmt.Printf("GC CPU Fraction: %.6f\n", memStats.GCCPUFraction)
 }
 
 func profileBenchmark(b *testing.B, name string, benchmarkFunc func()) {
@@ -95,10 +97,48 @@ func profileBenchmark(b *testing.B, name string, benchmarkFunc func()) {
 	defer pprof.StopCPUProfile()
 	defer printGCCPUFrac()
 
+	// Channel to stop the goroutine
+	stopChan := make(chan struct{})
+	// Slice to store heap allocations
+	var heapAllocs []uint64
+
+	// Goroutine to query heap_alloc
+	go func() {
+		ticker := time.NewTicker(100 * time.Millisecond)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				var memStats runtime.MemStats
+				runtime.ReadMemStats(&memStats)
+				heapAllocs = append(heapAllocs, memStats.HeapAlloc)
+			case <-stopChan:
+				return
+			}
+		}
+	}()
+
 	// Run the benchmark
 	b.ResetTimer()
 	benchmarkFunc()
 	b.StopTimer()
+
+	// Stop the goroutine
+	close(stopChan)
+
+	// Calculate average and p99
+	var total uint64
+	for _, alloc := range heapAllocs {
+		total += alloc
+	}
+	avgHeapAlloc := total / uint64(len(heapAllocs))
+
+	// Sort heapAllocs to find p99
+	sort.Slice(heapAllocs, func(i, j int) bool { return heapAllocs[i] < heapAllocs[j] })
+	p99HeapAlloc := heapAllocs[len(heapAllocs)*99/100]
+
+	fmt.Printf("Average HeapAlloc: %d bytes\n", avgHeapAlloc)
+	fmt.Printf("P99 HeapAlloc: %d bytes\n", p99HeapAlloc)
 
 	// Capture memory profile
 	memProfile, err := os.Create(filepath.Join(dir, "mem.prof"))

@@ -83,7 +83,7 @@ func setGCValueAIMD(f *finalizerRef) {
 	}
 }
 
-// Dynamically modifies GOGC/GOMEMLIMIT to either 50 or 500
+// Dynamically modifies GOGC/GOMEMLIMIT to either 60 or 500
 // based on positive/negative difference in allocation speed
 func setGCValueFlipFlop(f *finalizerRef) {
 	for range f.parent.ch {
@@ -105,7 +105,7 @@ func setGCValueFlipFlop(f *finalizerRef) {
 	}
 }
 
-// Dynamically modifies GOGC/GOMEMLIMIT to either 50 or 500
+// Dynamically modifies GOGC/GOMEMLIMIT to either 60 or 500
 // based on allocation speed being above or below 1GB threshold
 func setGCValueThreshold(f *finalizerRef) {
 	const threshold = 1024 * 1024 * 1024
@@ -130,7 +130,8 @@ func setGCValueThreshold(f *finalizerRef) {
 // Dynamically scales GOGC/GOMEMLIMIT linearly based on allocation rate
 // (normalized into the range of [minGCPercent, maxGCPercent])
 func setGCValueLinear(f *finalizerRef) {
-	// alloc rates are min of 1MB/sec and max of 50MB/sec
+	// alloc rates are min of 1MB/sec and max of 50MB/sec, these are somewhat arbitrarily chosen but can possibly be extended
+	// to be read off a profile?
 	const maxAllocRate = 1024 * 1024 * 50
 	const minAllocRate = 1024 * 1024 * 1
 	for range f.parent.ch {
