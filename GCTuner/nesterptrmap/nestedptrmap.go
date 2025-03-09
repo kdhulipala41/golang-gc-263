@@ -6,9 +6,9 @@ import (
 	"time"
 )
 
-const totalSize = 50 * 1024 * 1024 // 10MB in bytes
-const numKeys = 100000
-const depth = 30
+const totalSize = 30 * 1024 * 1024 // 10MB in bytes
+const numKeys = 50000
+const depth = 40
 
 type DeepPtr struct {
 	Next      *DeepPtr
