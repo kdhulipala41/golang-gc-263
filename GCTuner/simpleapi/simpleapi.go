@@ -3,7 +3,7 @@ package main
 import (
 	"cs263/GCTuner/astparse"
 	"cs263/GCTuner/gctuner"
-	"cs263/GCTuner/mergesort"
+	nestedptrmap "cs263/GCTuner/nesterptrmap"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -11,8 +11,8 @@ import (
 	"runtime"
 )
 
-func mergesortHandler(w http.ResponseWriter, r *http.Request) {
-	mergesort.AllocateNAndSort(10000)
+func nestedptrmapHandler(w http.ResponseWriter, r *http.Request) {
+	nestedptrmap.InitAndMutateNestedPtrMap()
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Success\n"))
@@ -41,6 +41,18 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stats)
 }
 
+var liveMemory []byte
+
+func allocateMemoryHandler(w http.ResponseWriter, r *http.Request) {
+	liveMemory = make([]byte, 700*1024*1024) // Allocate 700MB
+	for i := range liveMemory {
+		liveMemory[i] = 1 // Touch the memory to ensure it's allocated
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Allocated 700MB of memory\n"))
+}
+
 func main() {
 	var tunerType int
 	flag.IntVar(&tunerType, "tunerType", -1, "Type of GC tuner to use: 0 - AIMD, 1 - Rolling Avg, 2 - Linear, 3- Flip Flop, 4 - GC Value Threshold")
@@ -51,9 +63,10 @@ func main() {
 		gctuner.InitGCTuner(tunerType)
 	}
 
-	http.HandleFunc("/mergesort", mergesortHandler)
+	http.HandleFunc("/nestedptrmap", nestedptrmapHandler)
 	http.HandleFunc("/astparse", astparseHandler)
 	http.HandleFunc("/stats", statsHandler)
+	http.HandleFunc("/bigallocate", allocateMemoryHandler)
 
 	http.ListenAndServe(":8080", nil)
 }
