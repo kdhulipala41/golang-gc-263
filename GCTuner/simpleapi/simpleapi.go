@@ -6,7 +6,6 @@ import (
 	nestedptrmap "cs263/GCTuner/nesterptrmap"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"net/http"
 	"runtime"
 )
@@ -62,7 +61,6 @@ func main() {
 	flag.Parse()
 
 	if tunerType != -1 {
-		fmt.Print("turning on gctuner")
 		gctuner.InitGCTuner(tunerType, memLimitFrac)
 	}
 

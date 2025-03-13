@@ -1,6 +1,7 @@
 package gctuner
 
 import (
+	"fmt"
 	"runtime"
 	"runtime/debug"
 	"time"
@@ -198,6 +199,16 @@ func InitGCTuner(tunerType int, memLimitFrac float64) *finalizer {
 
 	f.ref = &finalizerRef{parent: f}
 	runtime.SetFinalizer(f.ref, finalizerHandler)
+
+	strMap := map[int]string{
+		0: "AIMD",
+		1: "RollingAvg",
+		2: "Linear",
+		3: "FlipFlop",
+		4: "Threshold",
+	}
+
+	fmt.Printf("Toggling GC Tuner using %v and limit fraction %v\n", strMap[tunerType], memLimitFrac)
 
 	switch tunerType {
 	case 0:
