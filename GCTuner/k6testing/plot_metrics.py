@@ -50,5 +50,5 @@ for metric, title in metrics.items():
     plt.title(title)
     plt.xlabel('Time')
     plt.grid(True)
-    plt.savefig(f'{metric}.png')
+    plt.savefig(f'rungraphs/{metric}.png')
     plt.show()

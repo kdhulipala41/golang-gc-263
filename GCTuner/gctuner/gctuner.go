@@ -179,10 +179,10 @@ func setGCValueRollingAvg(f *finalizerRef) {
 }
 
 // Add options, and finish above function to read memory limit and set it based on the option.
-func InitGCTuner(tunerType int) *finalizer {
+func InitGCTuner(tunerType int, memLimitFrac float64) *finalizer {
 	// Set the GOMEMLIMIT to 90% of the cgroup's memory limit or the system's memory limit.
 	memlimit.SetGoMemLimitWithOpts(
-		memlimit.WithRatio(0.7),
+		memlimit.WithRatio(memLimitFrac),
 		memlimit.WithProvider(
 			memlimit.ApplyFallback(
 				memlimit.FromCgroup,

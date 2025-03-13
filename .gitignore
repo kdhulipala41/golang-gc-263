@@ -1,1 +1,4 @@
 .DS_Store
+rungraphs
+test_results.json
+test-report.html

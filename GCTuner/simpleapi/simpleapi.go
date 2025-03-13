@@ -58,9 +58,13 @@ func main() {
 	flag.IntVar(&tunerType, "tunerType", -1, "Type of GC tuner to use: 0 - AIMD, 1 - Rolling Avg, 2 - Linear, 3- Flip Flop, 4 - GC Value Threshold")
 	flag.Parse()
 
+	var memLimitFrac float64
+	flag.Float64Var(&memLimitFrac, "memLimitFrac", 0.9, "The fraction of the container or system memory limit that should be set as GOMEMLIMIT. Defauls to 0.9")
+	flag.Parse()
+
 	if tunerType != -1 {
 		fmt.Print("turning on gctuner")
-		gctuner.InitGCTuner(tunerType)
+		gctuner.InitGCTuner(tunerType, memLimitFrac)
 	}
 
 	http.HandleFunc("/nestedptrmap", nestedptrmapHandler)
