@@ -182,7 +182,7 @@ func setGCValueRollingAvg(f *finalizerRef) {
 func InitGCTuner(tunerType int) *finalizer {
 	// Set the GOMEMLIMIT to 90% of the cgroup's memory limit or the system's memory limit.
 	memlimit.SetGoMemLimitWithOpts(
-		memlimit.WithRatio(0.9),
+		memlimit.WithRatio(0.7),
 		memlimit.WithProvider(
 			memlimit.ApplyFallback(
 				memlimit.FromCgroup,

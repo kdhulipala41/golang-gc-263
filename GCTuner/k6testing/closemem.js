@@ -19,17 +19,7 @@ export const options = {
       executor: "ramping-vus",
       stages: [
         // Initial ramp-up to warm up the system
-        { duration: "30s", target: 20 }, // Ramp up to 50 users over 30 seconds
-        { duration: "30s", target: 20 }, // Stay at 50 users
-
-        // Burst 1: Sudden spike to 200 users
-        { duration: "10s", target: 50 }, // Spike to 200 users for 10 seconds
-        { duration: "30s", target: 20 }, // Drop back to 50 users for 20 seconds
-        { duration: "40s", target: 0 }, // Stay at 50 users
-
-        // Initial ramp-up to warm up the system
-        { duration: "30s", target: 20 }, // Ramp up to 50 users over 30 seconds
-        { duration: "30s", target: 20 }, // Stay at 50 users
+        { duration: "30s", target: 1 }, // Ramp up to 50 users over 30 seconds
 
         // Ramp down to 0 users
         { duration: "30s", target: 0 }, // Gradually reduce load to 0 users
@@ -47,7 +37,7 @@ export const options = {
       gracefulStop: "5s", // Allow 5 seconds to finish after load_test ends
     },
     // Memory Bloat
-    stats_monitor: {
+    memory_bloat: {
       executor: "per-vu-iterations",
       vus: 1, // Only 1 VU
       iterations: 1, // Large number of iterations (will stop when load_test ends)

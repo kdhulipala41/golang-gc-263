@@ -44,13 +44,13 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 var liveMemory []byte
 
 func allocateMemoryHandler(w http.ResponseWriter, r *http.Request) {
-	liveMemory = make([]byte, 700*1024*1024) // Allocate 700MB
+	liveMemory = make([]byte, 600*1024*1024) // Allocate 600MB
 	for i := range liveMemory {
 		liveMemory[i] = 1 // Touch the memory to ensure it's allocated
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Allocated 700MB of memory\n"))
+	w.Write([]byte("Allocated 600MB of memory\n"))
 }
 
 func main() {
