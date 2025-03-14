@@ -1,5 +1,8 @@
 package main
 
+// This test suite is our main benchmarking suite which tests the effectiveness of our tuner and its different adjustment
+// mechanisms. The default value used to test the GC Tuner was 80% of the container/system limit (cgroup).
+
 import (
 	"cs263/GCTuner/astparse"
 	"cs263/GCTuner/gctuner"

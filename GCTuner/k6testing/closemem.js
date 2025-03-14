@@ -22,18 +22,18 @@ export const options = {
         { duration: "30s", target: 50 }, // Ramp up to 50 users over 30 seconds
         { duration: "30s", target: 50 }, // Stay at 50 users
 
-        // Burst 1: Sudden spike to 200 users
-        { duration: "10s", target: 120 }, // Spike to 200 users for 10 seconds
-        { duration: "30s", target: 50 }, // Drop back to 50 users for 20 seconds
-        { duration: "40s", target: 0 }, // Stay at 50 users
+        // Burst 1: Sudden spike to 120 users
+        { duration: "10s", target: 120 }, // Spike to 120 users for 10 seconds
+        { duration: "30s", target: 50 }, // Drop back to 50 users for 30 seconds
+        { duration: "40s", target: 0 }, // Level out at 0
 
-        // Burst 2: Another spike to 300 users
-        { duration: "10s", target: 135 }, // Spike to 300 users for 10 seconds
-        { duration: "30s", target: 50 }, // Drop back to 50 users for 20 seconds
-        { duration: "40s", target: 0 }, // Stay at 50 users
+        // Burst 2: Another spike to 135 users
+        { duration: "10s", target: 135 }, // Spike to 135 users for 10 seconds
+        { duration: "30s", target: 50 }, // Drop back to 50 users for 30 seconds
+        { duration: "40s", target: 0 }, // Level out at 0
 
-        // Burst 3: Final spike to 400 users
-        { duration: "10s", target: 150 }, // Spike to 400 users for 10 seconds
+        // Burst 3: Final spike to 150 users
+        { duration: "10s", target: 150 }, // Spike to 150 users for 10 seconds
         { duration: "20s", target: 50 }, // Drop back to 50 users for 20 seconds
 
         // Ramp down to 0 users
@@ -46,7 +46,7 @@ export const options = {
       executor: "per-vu-iterations",
       vus: 1, // Only 1 VU
       iterations: 1, // Large number of iterations (will stop when load_test ends)
-      maxDuration: "230s",
+      maxDuration: "280s",
       exec: "statsMonitor", // Function to execute for this scenario
       startTime: "0s", // Start immediately
       gracefulStop: "5s", // Allow 5 seconds to finish after load_test ends

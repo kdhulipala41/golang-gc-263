@@ -1,12 +1,16 @@
 package nestedptrmap
 
+// This package contains a function which initializes a hashmap of int keys to DeepPtr values -- taking up totalSize(30MB) and having numKeys keys.
+// Then, 8 goroutines all perform work on this map by deleting 1000 entries, populating new entries across the whole map ~50 times.
+// Thus a bunch of garbage is created, and this garbage also has quite a bit of pointers (depth = 40) to traverse.
+
 import (
 	"math/rand"
 	"sync"
 	"time"
 )
 
-const totalSize = 30 * 1024 * 1024 // 10MB in bytes
+const totalSize = 30 * 1024 * 1024 // 30MB in bytes
 const numKeys = 50000
 const depth = 40
 

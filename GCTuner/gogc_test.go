@@ -1,5 +1,9 @@
 package main
 
+// This test suite contains our initial findings on benchmarking the results of statically toggling the GOGC and GOMEMLIMIT,
+// which can show slight improvements on the AST Parsing Benchmark. In addition, it includes a vital function profileBenchmark
+// which we use across all our benchmarks.
+
 import (
 	"cs263/GCTuner/astparse"
 	"fmt"

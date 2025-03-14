@@ -106,7 +106,7 @@ func setGCValueFlipFlop(f *finalizerRef) {
 	}
 }
 
-// Dynamically modifies GOGC/GOMEMLIMIT to either 60 or 500
+// Dynamically modifies GOGC to either 60 or 500
 // based on allocation speed being above or below 1GB threshold
 func setGCValueThreshold(f *finalizerRef) {
 	const threshold = 1024 * 1024 * 1024
@@ -181,7 +181,7 @@ func setGCValueRollingAvg(f *finalizerRef) {
 
 // Add options, and finish above function to read memory limit and set it based on the option.
 func InitGCTuner(tunerType int, memLimitFrac float64) *finalizer {
-	// Set the GOMEMLIMIT to 90% of the cgroup's memory limit or the system's memory limit.
+	// Sets by default the GOMEMLIMIT to 80% of the cgroup's memory limit or the system's memory limit.
 	memlimit.SetGoMemLimitWithOpts(
 		memlimit.WithRatio(memLimitFrac),
 		memlimit.WithProvider(

@@ -1,5 +1,9 @@
 package main
 
+// This package contains our API hosted on the EC2 instance. It contains some simple endpoints that will run minimized
+// versions of the short-lived tests, and also includes a stats endpoint which queries the runtime memstats to obtain values
+// like size of the live heap or # of gc runs.
+
 import (
 	"cs263/GCTuner/astparse"
 	"cs263/GCTuner/gctuner"
@@ -10,6 +14,7 @@ import (
 	"runtime"
 )
 
+// Calls nestedptrmap.
 func nestedptrmapHandler(w http.ResponseWriter, r *http.Request) {
 	nestedptrmap.InitAndMutateNestedPtrMap()
 
@@ -17,6 +22,7 @@ func nestedptrmapHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Success\n"))
 }
 
+// Calls one iteration of AST parse.
 func astparseHandler(w http.ResponseWriter, r *http.Request) {
 	astparse.ParsePackage()
 
@@ -42,6 +48,7 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 
 var liveMemory []byte
 
+// Bloats memory by allocating a large 600MB global var that will stay during the lifetime of the program.
 func allocateMemoryHandler(w http.ResponseWriter, r *http.Request) {
 	liveMemory = make([]byte, 600*1024*1024) // Allocate 600MB
 	for i := range liveMemory {

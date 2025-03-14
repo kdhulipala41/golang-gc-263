@@ -1,3 +1,6 @@
+// This load test was implemented but unused -- the nestedptrmap test serves a better purpose as a short-lived one-shot test,
+// as it can be extremely intensive on compute power and memory which our small EC2 instance would not handle well.
+
 import http from "k6/http";
 import { check, sleep } from "k6";
 import { Gauge, Trend } from "k6/metrics";
@@ -11,7 +14,7 @@ const lastGcPause = new Trend("last_gc_pause_ns");
 // Define the options for the load test
 export const options = {
   scenarios: {
-    // Scenario 1: Main load test on /astparse
+    // Scenario 1: Main load test on /nestedptrmap
     load_test: {
       executor: "ramping-vus",
       stages: [
@@ -19,18 +22,18 @@ export const options = {
         { duration: "30s", target: 50 }, // Ramp up to 50 users over 30 seconds
         { duration: "30s", target: 50 }, // Stay at 50 users
 
-        // Burst 1: Sudden spike to 200 users
-        { duration: "10s", target: 120 }, // Spike to 200 users for 10 seconds
-        { duration: "30s", target: 50 }, // Drop back to 50 users for 20 seconds
-        { duration: "40s", target: 0 }, // Stay at 50 users
+        // Burst 1: Sudden spike to 120 users
+        { duration: "10s", target: 120 }, // Spike to 120 users for 10 seconds
+        { duration: "30s", target: 50 }, // Drop back to 50 users for 30 seconds
+        { duration: "40s", target: 0 }, // Level out at 0
 
-        // Burst 2: Another spike to 300 users
-        { duration: "10s", target: 135 }, // Spike to 300 users for 10 seconds
-        { duration: "30s", target: 50 }, // Drop back to 50 users for 20 seconds
-        { duration: "40s", target: 0 }, // Stay at 50 users
+        // Burst 2: Another spike to 135 users
+        { duration: "10s", target: 135 }, // Spike to 135 users for 10 seconds
+        { duration: "30s", target: 50 }, // Drop back to 50 users for 30 seconds
+        { duration: "40s", target: 0 }, // Level out at 0
 
-        // Burst 3: Final spike to 400 users
-        { duration: "10s", target: 150 }, // Spike to 400 users for 10 seconds
+        // Burst 3: Final spike to 150 users
+        { duration: "10s", target: 150 }, // Spike to 150 users for 10 seconds
         { duration: "20s", target: 50 }, // Drop back to 50 users for 20 seconds
 
         // Ramp down to 0 users
@@ -55,7 +58,7 @@ export const options = {
   },
   cloud: {
     // Test runs with the same name groups test runs together
-    name: "CS263AstParse",
+    name: "CS263NestedPtrMap",
   },
 };
 
@@ -73,7 +76,7 @@ function getStats() {
   }
 }
 
-// Scenario 1: Main load test on /astparse
+// Scenario 1: Main load test on /nestedptrmap
 export function mainLoadTest() {
   const url = `http://${__ENV.MY_HOSTNAME}/nestedptrmap`;
   const res = http.get(url);

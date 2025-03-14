@@ -33,7 +33,7 @@ df = df[df['metric'].isin(metrics.keys())]
 # Filter out rows where data.value is NaN
 df = df.dropna(subset=['data.value'])
 
-# Print the first 10 entries of the dataframe
+# Grab necessary metrics, and set time as index
 df = df[['time', 'metric', 'data.value']]
 df.set_index('time', inplace=True)
 
