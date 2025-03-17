@@ -5,13 +5,14 @@ package main
 // like size of the live heap or # of gc runs.
 
 import (
-	"cs263/GCTuner/astparse"
-	"cs263/GCTuner/gctuner"
-	nestedptrmap "cs263/GCTuner/nesterptrmap"
 	"encoding/json"
 	"flag"
 	"net/http"
 	"runtime"
+
+	"github.com/kdhulipala41/golang-gc-263/GCTuner/astparse"
+	"github.com/kdhulipala41/golang-gc-263/GCTuner/gctuner"
+	nestedptrmap "github.com/kdhulipala41/golang-gc-263/GCTuner/nesterptrmap"
 )
 
 // Calls nestedptrmap.
@@ -64,7 +65,7 @@ func main() {
 	flag.IntVar(&tunerType, "tunerType", -1, "Type of GC tuner to use: 0 - AIMD, 1 - Rolling Avg, 2 - Linear, 3- Flip Flop, 4 - GC Value Threshold")
 
 	var memLimitFrac float64
-	flag.Float64Var(&memLimitFrac, "memLimitFrac", 0.8, "The fraction of the container or system memory limit that should be set as GOMEMLIMIT. Defauls to 0.8")
+	flag.Float64Var(&memLimitFrac, "memLimitFrac", 0.8, "The fraction of the container or system memory limit that should be set as GOMEMLIMIT. Defaults to 0.8")
 	flag.Parse()
 
 	if tunerType != -1 {

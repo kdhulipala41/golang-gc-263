@@ -4,10 +4,11 @@ package main
 // mechanisms. The default value used to test the GC Tuner was 80% of the container/system limit (cgroup).
 
 import (
-	"cs263/GCTuner/astparse"
-	"cs263/GCTuner/gctuner"
-	nestedptrmap "cs263/GCTuner/nesterptrmap"
 	"testing"
+
+	"github.com/kdhulipala41/golang-gc-263/GCTuner/astparse"
+	"github.com/kdhulipala41/golang-gc-263/GCTuner/gctuner"
+	nestedptrmap "github.com/kdhulipala41/golang-gc-263/GCTuner/nesterptrmap"
 )
 
 func BenchmarkASTParseNoTuner(b *testing.B) {

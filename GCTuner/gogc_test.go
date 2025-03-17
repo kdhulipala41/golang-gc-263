@@ -5,7 +5,6 @@ package main
 // which we use across all our benchmarks.
 
 import (
-	"cs263/GCTuner/astparse"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -15,6 +14,8 @@ import (
 	"sort"
 	"testing"
 	"time"
+
+	"github.com/kdhulipala41/golang-gc-263/GCTuner/astparse"
 )
 
 func BenchmarkASTParseDefault(b *testing.B) {
