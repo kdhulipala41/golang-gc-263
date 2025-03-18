@@ -1,6 +1,8 @@
 # A Survey on the Golang Garbage Collector
 
-## Project Vision and Plan
+### Vision
+
+The Go garbage collector implements a concurrent, tri-color, mark and sweep algorithm that is triggered periodically or based on memory pressure (heap target has been exceeded). Although the Go garbage collector provides a knob GOGC to adjust the size of the total heap relative to the size of live objects, applications that see frequent and/or high variations in load can still struggle with high CPU usage from GC cycles and possibly even OOMs due to the GC being too aggressive or too passive. We would like to investigate the intricacies of Go’s garbage collector, hoping to improve on its runtime pacer by leveraging the GOGC knob dynamically along with other GC knobs such as GOMEMLIMIT.
 
 ### Installation
 
