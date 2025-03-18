@@ -2,27 +2,33 @@
 
 ## Project Vision and Plan
 
-### Progress Documentation
+### Installation
 
-https://docs.google.com/document/d/1q4BGUexBX5jX2qiAoXdoHvDsSrt7P59ITinFNY0-x7w/edit?usp=sharing
+If the directory is not already in a module, create one in the root directory:
 
-### Vision
+```shell
+go mod init example.com/test
+```
 
-The Go garbage collector implements a concurrent, tri-color, mark and sweep algorithm that is triggered periodically or based on memory pressure (heap target has been exceeded). Although the Go garbage collector provides a knob GOGC to adjust the size of the total heap relative to the size of live objects, applications that see frequent and/or high variations in load can still struggle with high CPU usage from GC cycles and possibly even OOMs due to the GC being too aggressive or too passive. We would like to investigate the intricacies of Go’s garbage collector, hoping to improve on its runtime pacer by leveraging the GOGC knob dynamically along with other GC knobs such as GOMEMLIMIT.
+### Usage
 
-### Plan
+Import the following line and call the constructor for the gctuner:
 
-- Learn more about the Golang Garbage Collector
-  - Memory Allocation Patterns, Escape Analysis, Concurrent Tri-Color Mark and Sweep
-- Benchmark 3 different programs in Go with the default settings of GOGC
-  -Use pprof
-- Play with GC knobs such as GOGC and GOMEMLIMIT
-  - Read papers from Uber, Weaviate, Twitch on ways to mitigate high CPU usage and OOMs caused by Go’s garbage collection
-- Implement a variation of these solutions and compare with our previous benchmark results on the same programs
+```go
+package main
 
-## Resources
+import "github.com/kdhulipala41/golang-gc-263/GCTuner/gctuner"
 
-- https://www.uber.com/blog/how-we-saved-70k-cores-across-30-mission-critical-services/
-- https://weaviate.io/blog/gomemlimit-a-game-changer-for-high-memory-applications
-- https://blog.twitch.tv/en/2019/04/10/go-memory-ballast-how-i-learnt-to-stop-worrying-and-love-the-heap/
-- https://cs.opensource.google/go/x/benchmarks
+func main() {
+  // Giving it values of 3 = Flip Flop Tuner, and 0.8 or 80% of container/system limit
+	gctuner.InitGCTuner(3, 0.8)
+}
+```
+
+Then proceed to run:
+
+```shell
+go mod tidy
+```
+
+This will install the dependencies needed. Now you should be ready to Go!
